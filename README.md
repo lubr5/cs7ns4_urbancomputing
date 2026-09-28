@@ -12,3 +12,7 @@ python receiver.py
 
 ```
 
+## Export Firebase data to CSV
+```
+python getCSV.py
+```
