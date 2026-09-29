@@ -2,7 +2,7 @@
 
 
 
-## Run
+## Run receiver for collected data
 
 ```
 
@@ -12,7 +12,13 @@ python receiver.py
 
 ```
 
-## Export Firebase data to CSV
+## Export my collected data from Firebase storage to CSV
 ```
 python getCSV.py
+```
+## Run poller for Dublin City Council open data API
+```
+venv\Scripts\activate.bat
+
+python poller.py
 ```
