@@ -8,17 +8,17 @@
 
 venv\Scripts\activate.bat
 
-python receiver.py
+python3 receiver.py
 
 ```
 
 ## Export my collected data from Firebase storage to CSV
 ```
-python getCSV.py
+python3 getCSV.py
 ```
 ## Run poller for Dublin City Council open data API
 ```
 venv\Scripts\activate.bat
 
-python poller.py
+python3 poller.py
 ```
