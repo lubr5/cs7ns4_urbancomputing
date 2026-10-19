@@ -28,9 +28,16 @@ to start the ngrok URL
 ngrok http --url=swapping-oncoming-joining.ngrok-free.dev 8000
 ```
 
-## TEMP: test calculations.py
+## TEMP: test userCalculations.py
 ```
-python3 calculations.py TEST
+python3 userCalculations.py TEST
 ```
 replace TEST with real user tokens
 calculations will eventually be instantiated by a Main file when the rest of the application is written, this is just to test that the core functionality of the user insights calculations is working
+
+## TEMP: test stationCalculations.py
+```
+python3 stationCalculations.py 53.34385111946036 -6.255344078805972
+```
+replace LAT/LONG with real user location
+calculations will eventually be instantiated by a Main file when the rest of the application is written, this is just to test that the core functionality of the station insights calculations is working
