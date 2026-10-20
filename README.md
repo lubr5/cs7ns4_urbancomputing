@@ -43,13 +43,13 @@ replace LAT/LONG with real user location
 calculations will eventually be instantiated by a Main file when the rest of the application is written, this is just to test that the core functionality of the station insights calculations is working
 
 ## Offset for Phone Calculations: 92.75dB
-I visited Chancery Park on 20 Oct 2026, between 12:30-12:50.
-I recorded the noise on my phone (dBFS), while polling the dB(A) sensor at the site.
-From this, I was able to calculate an offset of 92.75dB which will help me convert phone readings of dBFS into ordinary dB.
-This was only done on my phone.
-I cannot possibly ask all users to go calibrate their devices.
-Therefore 92.75dB be will applied to all dBFS readings that the application recieves, as a gold-standard.
-Chancery Park (DCC Monitor 11) is one of the noisier monitors on average, based on looking at DCC's Noise Monitor webiste.
-This makes the calibration suitable for my use-case of monitoring for urban environments.
-At the time of the calibration recording, there was heavy machinery in operation at Chancery Park, which may not be the most reflective of the city and may skew this calibration.
-
+I visited Chancery Park on 20 Oct 2026, between 12:30-12:50.<br>
+I recorded the noise on my phone (dBFS), while polling the dB(A) sensor at the site.<br>
+From this, I was able to calculate an offset of 92.75dB which will help me convert phone readings of dBFS into ordinary dB.<br>
+This was only done on my phone.<br>
+I cannot possibly ask all users to go calibrate their devices.<br>
+Therefore 92.75dB be will applied to all dBFS readings that the application recieves, as a gold-standard.<br>
+Chancery Park (DCC Monitor 11) is one of the noisier monitors on average, based on looking at DCC's Noise Monitor webiste.<br>
+This makes the calibration suitable for my use-case of monitoring for urban environments.<br>
+At the time of the calibration recording, there was heavy machinery in operation at Chancery Park, which may not be the most reflective of the city and may skew this calibration.<br>
+<img width="656" height="360" alt="image" src="https://github.com/user-attachments/assets/570a8fc2-50f3-475d-a0bd-cc8d90c82844" />
