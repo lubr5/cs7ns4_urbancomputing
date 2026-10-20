@@ -2,6 +2,7 @@
 
 import re
 import threading
+from collections import defaultdict, deque
 from datetime import datetime, timedelta, timezone
 
 import firebase_admin
@@ -18,6 +19,7 @@ app = Flask(__name__)
 
 SESSIONS = {}
 LOCK = threading.Lock()
+RECENT = defaultdict(lambda: deque(maxlen=300))    # token -> newest readings (about 5 minutes)
 
 # Nanoseconds since epoch to UTC conversion
 def nanosecondsToUTC(ns):
@@ -104,6 +106,7 @@ def receive_data():
     doc_id, doc = buildBatch(request.get_json(force=True), token)
     ref = db.collection(COLLECTION)
     (ref.document(doc_id) if doc_id else ref.document()).set(doc)
+    RECENT[token].extend(doc["readings"])      # live view reads this, so it does not re-read Firestore
     print(f"[{token}] batch {doc['messageId']}: {doc['count']} rows")
     return jsonify({"received": doc["count"]}), 200
 
