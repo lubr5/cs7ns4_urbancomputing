@@ -1,6 +1,5 @@
 import time
 from datetime import datetime
-
 import firebase_admin
 import requests
 from firebase_admin import credentials, firestore
@@ -8,7 +7,6 @@ from firebase_admin import credentials, firestore
 URL = "https://dublincityairandnoise.ie/assets/php/get-monitors.php"
 COLLECTION = "open_data_readings"
 POLL_SECONDS = 300
-
 cred = credentials.Certificate("serviceAccountKey.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
@@ -16,11 +14,9 @@ db = firestore.client()
 # monitor_id -> last reading_id written, so unchanged monitors are not rewritten
 LAST_SEEN = {}
 
-
 # air quality monitors are in the same feed, so keep only the noise ones
 def isNoiseMonitor(monitor):
     return (monitor.get("monitor_type") or {}).get("category") == "noise"
-
 
 # the API sends some numbers as strings (e.g. latitude), so convert safely
 def toFloat(value):
@@ -28,7 +24,6 @@ def toFloat(value):
         return float(value)
     except (TypeError, ValueError):
         return None
-
 
 # one Firestore document per new reading: reading + hourly/daily average
 def buildDocument(monitor):
@@ -54,7 +49,6 @@ def buildDocument(monitor):
         "current_rating": monitor.get("current_rating"),
         "received_at": firestore.SERVER_TIMESTAMP,   # when the laptop got it
     }
-
 
 # request the current state of all monitors and write the ones that changed
 def poll():
