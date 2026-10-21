@@ -8,6 +8,8 @@ MIN_VALID_DBFS = -110   #ignore dbfs values below this
 COLLECTION = "live_batches"
 CELL_METRES = 150   # patches of locations, for putting data on a map
 METRES_PER_DEGREE_LAT = 111_320
+CALIBRATION_OFFSET = 92.75   # dBFS -> estimated dB(A), from calibration.py (Chancery Park, 20/10/2026)
+THRESHOLD_DBA = 70   # a reading above this counts as loud
 
 # a reading is usable if it has a real dBFS level and a location
 def isValid(reading):
@@ -16,8 +18,7 @@ def isValid(reading):
 def hasLocation(reading):
     return reading.get("latitude") is not None and reading.get("longitude") is not None
 
-# TODO: get the real offset after calibrating against Chancery Park meter
-def toLevel(reading, offset=0.0):
+def toLevel(reading, offset=CALIBRATION_OFFSET):
     return reading["dBFS"] + offset
 
 # average over decibels (log scale)
@@ -28,7 +29,7 @@ def leq(levels):
     return 10 * math.log10(sum(10 ** (level / 10) for level in levels) / len(levels))
 
 # average leq, peak and time above a threshold
-def sessionSummary(readings, offset=0.0, threshold=None):
+def sessionSummary(readings, offset=CALIBRATION_OFFSET, threshold=None):
     levels = [toLevel(r, offset) for r in readings if isValid(r)]
     if not levels:
         return None
@@ -50,7 +51,7 @@ def hourOfDay(reading):
     return int(reading["IST"].split(" ")[1].split(":")[0])
 
 # Leq for each hour of the day across all the user's sessions
-def byHourOfDay(readings, offset=0.0):
+def byHourOfDay(readings, offset=CALIBRATION_OFFSET):
     groups = defaultdict(list)
     for r in readings:
         if isValid(r):
@@ -65,7 +66,7 @@ def cellOf(latitude, longitude):
     return math.floor(latitude / latStep), math.floor(longitude / lonStep), latStep, lonStep
 
 # Leq for each location across all the user's sessions
-def byLocation(readings, offset=0.0):
+def byLocation(readings, offset=CALIBRATION_OFFSET):
     groups = defaultdict(list)
     steps = {}
     for r in readings:
@@ -99,10 +100,9 @@ def fetchUserReadings(token):
         readings.extend(doc.to_dict().get("readings", []))
     return sorted(readings, key=lambda r: int(r["time"]))
 
-
 if __name__ == "__main__":
-    # python3 calculations.py <token>
+    # python3 userCalculations.py <token>
     data = fetchUserReadings(sys.argv[1])
-    print("session:", sessionSummary(data, threshold=-30))
+    print("session:", sessionSummary(data, threshold=THRESHOLD_DBA))
     print("by hour:", byHourOfDay(data))
     print("by location:", byLocation(data))
