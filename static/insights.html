@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your Noise Insights</title>
+  <link rel="stylesheet" href="/static/vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>Dublin Noise</h1>
+    <nav>
+      <a href="/">Map</a>
+      <a href="/insights" class="current">Insights</a>
+    </nav>
+    <div class="token">
+      <label for="token">Your token</label>
+      <input id="token" autocomplete="off" spellcheck="false" placeholder="e.g. CALIB">
+      <button id="save-token" type="button">Save</button>
+    </div>
+  </header>
+
+  <main class="scroll">
+    <div class="page">
+      <div id="status" class="status">Enter your token above to see your recordings.</div>
+
+      <div id="content" hidden>
+        <div class="cards">
+          <div class="card"><div class="label">Average level (Leq)</div><div class="value" id="leq">-</div></div>
+          <div class="card"><div class="label">Loudest moment</div><div class="value" id="peak">-</div></div>
+          <div class="card"><div class="label">Time above <span id="threshold-a">70</span> dB(A)</div><div class="value" id="above">-</div></div>
+          <div class="card"><div class="label">Readings</div><div class="value" id="readings">-</div></div>
+        </div>
+
+        <section class="panel">
+          <h2>Noise by time of day</h2>
+          <p class="hint">Average level (Leq) of everything you have recorded, grouped by the hour it was recorded.</p>
+          <div class="chart-box"><canvas id="hour-chart"></canvas></div>
+        </section>
+
+        <section class="panel">
+          <h2>Where you recorded</h2>
+          <p class="hint">Average level in each patch of about 150 m. Colour shows how loud it was.</p>
+          <div id="cell-map"></div>
+        </section>
+
+        <p class="note">Levels are estimated dB(A): your phone's readings converted with a one-point calibration against a DCC monitor. Treat them as estimates, not calibrated measurements.
+          <button id="reload" class="reload" type="button">Reload data</button></p>
+      </div>
+    </div>
+  </main>
+
+  <script src="/static/vendor/leaflet/leaflet.js"></script>
+  <script src="/static/vendor/chartjs/chart.umd.min.js"></script>
+  <script src="/static/insights.js"></script>
+</body>
+</html>

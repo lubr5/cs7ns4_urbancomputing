@@ -1,13 +1,10 @@
 ### cs7ns4\_urbancomputing
 
-
-
 ## Run receiver for collected data
 
 ```
 source .venv/bin/activate
 python3 receiver.py
-
 ```
 
 ## Export my collected data from Firebase storage to CSV
