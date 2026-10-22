@@ -1,6 +1,6 @@
 import threading
 import time
-from flask import jsonify, request
+from flask import jsonify, request, send_from_directory
 import newPoller
 import stationCalculations as stations
 import userCalculations as user
@@ -35,6 +35,15 @@ def publicStation(s):
         "age_minutes": stations.ageMinutes(s),
         **({"distance_m": s["distance_m"]} if "distance_m" in s else {}),
     }
+
+# serve pages from the static folder
+@app.route("/")
+def mapPage():
+    return send_from_directory(app.static_folder, "map.html")
+
+@app.route("/insights")
+def insightsPage():
+    return send_from_directory(app.static_folder, "insights.html")
 
 @app.route("/health")
 def health():
