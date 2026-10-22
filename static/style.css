@@ -1,0 +1,107 @@
+:root {
+  --bg: #f6f7f9;
+  --panel: #ffffff;
+  --text: #1c2430;
+  --muted: #5d6b7c;
+  --line: #d9dee5;
+  --accent: #1f6feb;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #11161d;
+    --panel: #1a212b;
+    --text: #e7ecf2;
+    --muted: #93a1b2;
+    --line: #2b3542;
+    --accent: #5aa2ff;
+  }
+}
+* { box-sizing: border-box; }
+html, body {
+  height: 100%;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+body {
+  display: flex;
+  flex-direction: column;
+}
+header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 20px;
+  padding: 10px 16px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+}
+header h1 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+nav { display: flex; gap: 14px; }
+nav a {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 2px 0;
+  border-bottom: 2px solid transparent;
+}
+nav a.current {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+.token {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.token input {
+  width: 9em;
+  padding: 4px 8px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+.token button {
+  padding: 4px 10px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+}
+main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+#map { flex: 1; min-height: 0; }
+.legend {
+  padding: 8px 10px;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.legend i {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  margin-right: 6px;
+  border-radius: 50%;
+  vertical-align: -1px;
+}
+.popup h3 { margin: 0 0 2px; font-size: 14px; }
+.popup .sub { margin: 0 0 6px; color: #5d6b7c; font-size: 12px; }
+.popup table { border-collapse: collapse; font-size: 13px; }
+.popup td { padding: 1px 10px 1px 0; }
+.popup td:first-child { color: #5d6b7c; }

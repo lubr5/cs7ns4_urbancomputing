@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dublin Noise Map</title>
+  <link rel="stylesheet" href="/static/vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>Dublin Noise</h1>
+    <nav>
+      <a href="/" class="current">Map</a>
+      <a href="/insights">Insights</a>
+    </nav>
+    <div class="token">
+      <label for="token">Your token</label>
+      <input id="token" autocomplete="off" spellcheck="false" placeholder="e.g. CALIB">
+      <button id="save-token" type="button">Save</button>
+    </div>
+  </header>
+
+  <main>
+    <div id="map"></div>
+  </main>
+
+  <script src="/static/vendor/leaflet/leaflet.js"></script>
+  <script src="/static/map.js"></script>
+</body>
+</html>
