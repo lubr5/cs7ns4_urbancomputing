@@ -145,3 +145,27 @@ main.scroll {
   border-radius: 6px;
   cursor: pointer;
 }
+/* Map page dashboard */
+#dashboard {
+  padding: 10px 16px 4px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+#dashboard .cards { margin: 8px 0 8px; gap: 10px; }
+#dashboard .card .value { font-size: 22px; }
+.card .sub { margin-top: 2px; color: var(--muted); font-size: 12px; }
+.card .when { color: var(--muted); font-size: 12px; }
+.chip {
+  display: inline-block;
+  padding: 3px 10px;
+  color: var(--muted);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 13px;
+}
+.chip.live { color: #2e9e4f; border-color: #2e9e4f; }
+.chip.offline { color: #d6602f; border-color: #d6602f; }
+.up { color: #d6602f; }
+.down { color: #2e9e4f; }
+#dashboard.stale .cards { opacity: 0.55; }

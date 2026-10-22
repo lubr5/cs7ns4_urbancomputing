@@ -21,6 +21,32 @@
     </div>
   </header>
 
+  <section id="dashboard">
+    <div id="live-status" class="chip">Enter your token to compare your noise with the city.</div>
+    <div class="cards">
+      <div class="card">
+        <div class="label">Your level <span class="when">(last 30 s)</span></div>
+        <div class="value" id="d-level">-</div>
+        <div class="sub" id="d-level-sub">Estimated dB(A) from your phone</div>
+      </div>
+      <div class="card">
+        <div class="label">Compared with nearest monitor</div>
+        <div class="value" id="d-nearest">-</div>
+        <div class="sub" id="d-nearest-sub"></div>
+      </div>
+      <div class="card">
+        <div class="label">Compared with your local area</div>
+        <div class="value" id="d-local">-</div>
+        <div class="sub" id="d-local-sub"></div>
+      </div>
+      <div class="card">
+        <div class="label">Compared with Dublin overall</div>
+        <div class="value" id="d-city">-</div>
+        <div class="sub" id="d-city-sub"></div>
+      </div>
+    </div>
+  </section>
+
   <main>
     <div id="map"></div>
   </main>
