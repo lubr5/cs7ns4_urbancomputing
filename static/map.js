@@ -1,7 +1,7 @@
 // Map page: Dublin-bounded OpenStreetMap with the DCC noise monitors as pins.
 
 const STATION_REFRESH_MS = 30000;
-const DUBLIN_BOUNDS = [[53.20, -6.50], [53.50, -6.00]];   //boundary box for Dublin City
+const DUBLIN_BOUNDS = [[53.265, -6.52], [53.495, -6.04]];   //boundary box for Dublin City
 // DCC's own colours, same as their website
 const RATING_COLOURS = { 1: "#2e9e4f", 2: "#8bc34a", 3: "#f2c200", 4: "#f28c00", 5: "#d63a2f" };
 const NO_RATING_COLOUR = "#8a94a0";
@@ -11,6 +11,13 @@ const map = L.map("map", {
   minZoom: 11,
   maxZoom: 18,
 }).fitBounds([[53.30, -6.35], [53.40, -6.18]]);
+
+// never zoom out far enough to show tiles outside the box, whatever the window size
+function fitMinZoom() {
+  map.setMinZoom(map.getBoundsZoom(DUBLIN_BOUNDS, true));
+}
+fitMinZoom();
+map.on("resize", fitMinZoom);
 
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
