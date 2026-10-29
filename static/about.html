@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About Dublin Noise</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>Dublin Noise</h1>
+    <nav>
+      <a href="/">Map</a>
+      <a href="/insights">Insights</a>
+      <a href="/share">Share</a>
+      <a href="/about" class="current">About</a>
+    </nav>
+  </header>
+
+  <main class="scroll">
+    <div class="page about">
+
+      <section class="panel">
+        <h2>How loud is it where you are?</h2>
+        <p>This application compares the noise your phone hears with the noise measured by Dublin City Council's monitors around the city.
+          Record with your phone, open the map, and you see how your surroundings compare with the nearest monitor, with your local area
+          and with Dublin.</p>
+      </section>
+
+      <section class="panel">
+        <h2>Why noise matters?</h2>
+        <p>Noise in a city is easy to get used to and easy to dismiss, but health researchers treat it as a real risk.
+          A <a href="https://magazine.hms.harvard.edu/articles/noise-and-health" target="_blank" rel="noopener">Harvard Medicine magazine feature</a>
+          (Stephanie Dutchen, Spring 2022) summarises the evidence. It links long-term noise, especially from traffic, to:</p>
+        <ul>
+          <li>hearing loss, tinnitus and sensitivity to sound</li>
+          <li>heart and circulation problems, and type 2 diabetes</li>
+          <li>disturbed sleep and stress</li>
+          <li>memory and attention problems, and learning delays in children</li>
+        </ul>
+        <p>As more of the world's population lives in cities, more people are exposed. Protecting hearing and health also means fewer people needing care later.</p>
+      </section>
+
+      <section class="panel">
+        <h2>How it works</h2>
+        <ol>
+          <li>The Sensor Logger app records the microphone and your location and sends them to this site</li>
+          <li>Dublin City Council's noise monitors publish a reading every 15 minutes</li>
+          <li>A phone microphone measures on its own scale, so readings are converted into estimated decibels (dB(A)) using a calibration made next to one of the council's monitors.</li>
+          <li>The <a href="/">Map</a> shows how much louder or quieter you are than the closest monitor, your 3km radius, and the city overall. <a href="/insights">Insights</a> shows your own history by time of day and by place.</li>
+        </ol>
+      </section>
+
+      <section class="panel">
+        <h2>Set up your phone</h2>
+        <ol>
+          <li>Install Sensor Logger and switch on the <strong>microphone</strong> and <strong>location</strong>.</li>
+          <li>Make up a token of characters</li>
+          <li>In Sensor Logger's HTTP push setting, use this address, with your own token on the end:
+            <pre class="code" id="push-url">/data?token=YOURTOKEN</pre></li>
+          <li>Type the same token into the box at the top of the page</li>
+          <li>Start recording</li>
+        </ol>
+      </section>
+
+      <section class="panel">
+        <h2>Calibration</h2>
+        <ul>
+          <li>Calibration was done once, at Chancery Park, beside one council monitor, on a day when heavy machinery was working nearby</li>
+          <li>Council readings arrive 10 to 15 minutes after they are measured</li>
+        </ul>
+      </section>
+
+      <section class="panel">
+        <h2>Sharing on the map</h2>
+        <ul>
+          <li>Sharing is optional. Shared readings leave the map after 1 hour.</li>
+          <li>On the <a href="/share">Share</a> page, <strong>Clear my data</strong> removes everything you have shared</li>
+        </ul>
+      </section>
+
+      <section class="panel">
+        <h2>Data and credits</h2>
+        <ul>
+          <li>Noise monitor data: <a href="https://dublincityairandnoise.ie" target="_blank" rel="noopener">Dublin City Council air and noise monitoring</a>.</li>
+          <li>Map: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors, drawn with <a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>.</li>
+          <li>Charts: <a href="https://www.chartjs.org" target="_blank" rel="noopener">Chart.js</a>. Data storage: <a href="https://firebase.google.com" target="_blank" rel="noopener">Firebase</a>. Phone sensing: Sensor Logger.</li>
+        </ul>
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    document.getElementById("push-url").textContent = location.origin + "/data?token=YOURTOKEN";
+  </script>
+</body>
+</html>

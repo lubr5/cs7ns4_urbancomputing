@@ -226,3 +226,17 @@ button.primary:disabled, button.danger:disabled { opacity: 0.45; cursor: default
 
 /* Citizen reading markers */
 .crowd-icon { background: none; border: 0; }
+/* About page */
+.about p, .about li { line-height: 1.55; }
+.about ul, .about ol { padding-left: 22px; margin: 8px 0 12px; }
+.about li { margin-bottom: 6px; }
+.about a { color: var(--accent); }
+pre.code {
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  overflow-x: auto;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: 13px;
+}

@@ -14,23 +14,24 @@
       <a href="/" class="current">Map</a>
       <a href="/insights">Insights</a>
       <a href="/share">Share</a>
+      <a href="/about">About</a>
     </nav>
     <div class="token">
       <label for="token">Your token</label>
-      <input id="token" autocomplete="off" spellcheck="false" placeholder="e.g. CALIB">
+      <input id="token" autocomplete="off" spellcheck="false" placeholder="e.g. Lucia">
       <button id="save-token" type="button">Save</button>
     </div>
   </header>
 
   <section id="dashboard">
     <div class="status-row">
-      <div id="live-status" class="chip">Enter your token to compare your noise with the city.</div>
+      <div id="live-status" class="chip">Enter your token</div>
       <button id="refresh" class="reload" type="button">Refresh DCC data</button>
       <span id="refresh-note" class="note"></span>
     </div>
     <div class="cards">
       <div class="card">
-        <div class="label">Your level <span class="when">(last 30 s)</span></div>
+        <div class="label">Your noise<span class="when">(last 30 s)</span></div>
         <div class="value" id="d-level">-</div>
         <div class="sub" id="d-level-sub">Estimated dB(A) from your phone</div>
       </div>
@@ -40,7 +41,7 @@
         <div class="sub" id="d-nearest-sub"></div>
       </div>
       <div class="card">
-        <div class="label">Compared with your local area</div>
+        <div class="label">Compared with 3km radius</div>
         <div class="value" id="d-local">-</div>
         <div class="sub" id="d-local-sub"></div>
       </div>

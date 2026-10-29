@@ -55,6 +55,10 @@ def insightsPage():
 def sharePage():
     return send_from_directory(app.static_folder, "share.html")
 
+@app.route("/about")
+def aboutPage():
+    return send_from_directory(app.static_folder, "about.html")
+
 @app.route("/health")
 def health():
     return jsonify({"ok": True})

@@ -14,6 +14,7 @@
       <a href="/">Map</a>
       <a href="/insights" class="current">Insights</a>
       <a href="/share">Share</a>
+      <a href="/about">About</a>
     </nav>
     <div class="token">
       <label for="token">Your token</label>
@@ -36,18 +37,16 @@
 
         <section class="panel">
           <h2>Noise by time of day</h2>
-          <p class="hint">Average level (Leq) of everything you have recorded, grouped by the hour it was recorded.</p>
+          <p class="hint">Average of everything you have recorded</p>
           <div class="chart-box"><canvas id="hour-chart"></canvas></div>
         </section>
 
         <section class="panel">
           <h2>Where you recorded</h2>
-          <p class="hint">Average level in each patch of about 150 m. Colour shows how loud it was.</p>
           <div id="cell-map"></div>
         </section>
 
-        <p class="note">Levels are estimated dB(A)
-          <button id="reload" class="reload" type="button">Reload data</button></p>
+        <p class="note"><button id="reload" class="reload" type="button">Reload data</button></p>
       </div>
     </div>
   </main>
