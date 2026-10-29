@@ -169,3 +169,21 @@ main.scroll {
 .up { color: #d6602f; }
 .down { color: #2e9e4f; }
 #dashboard.stale .cards { opacity: 0.55; }
+/* phone-sized screens */
+@media (max-width: 640px) {
+  header { padding: 8px 12px; gap: 6px 14px; }
+  .token { margin-left: 0; width: 100%; }
+  .token input { flex: 1; width: auto; }
+
+  #dashboard { padding: 8px 12px 2px; }
+  .cards, #dashboard .cards { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .card, #dashboard .card { padding: 8px 10px; }
+  .card .label, #dashboard .card .label { font-size: 12px; }
+  .card .value, #dashboard .card .value { font-size: 20px; }
+  .card .sub { font-size: 11px; }
+
+  body { overflow-y: auto; }
+  main:not(.scroll) { min-height: 60vh; }      /* the map keeps room even with the dashboard open */
+  main.scroll { padding: 12px; overflow: visible; }
+  .chart-box { height: 220px; }
+}

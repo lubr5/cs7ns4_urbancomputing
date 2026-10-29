@@ -8,7 +8,7 @@ MIN_VALID_DBFS = -110   #ignore dbfs values below this
 COLLECTION = "live_batches"
 CELL_METRES = 150   # patches of locations, for putting data on a map
 METRES_PER_DEGREE_LAT = 111_320
-CALIBRATION_OFFSET = 92.75   # dBFS -> estimated dB(A), from calibration.py (Chancery Park, 20/10/2026)
+CALIBRATION_OFFSET = 82.75   # dBFS -> estimated dB(A), from calibration.py (Chancery Park, 20/10/2026)
 THRESHOLD_DBA = 70   # a reading above this counts as loud
 
 # a reading is usable if it has a real dBFS level and a location

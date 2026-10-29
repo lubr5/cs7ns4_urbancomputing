@@ -45,7 +45,7 @@ function stationPopup(s) {
         <tr><td>Peak (LAFmax)</td><td>${escapeHtml(s.LAFmax)} dB(A)</td></tr>
         <tr><td>Hourly average</td><td>${escapeHtml(s.hourly_average)} dB(A)</td></tr>
         <tr><td>DCC rating</td><td>${escapeHtml(s.rating)}</td></tr>
-        <tr><td>Received</td><td>${escapeHtml(s.age_minutes)} min ago</td></tr>
+        <tr><td>Received</td><td>${formatAge(s.age_minutes)}</td></tr>
       </table>
     </div>`;
 }
@@ -101,6 +101,13 @@ const userLayer = L.layerGroup().addTo(map);
 let firstFix = true;
 
 const statusBox = document.getElementById("live-status");
+
+// minutes for recent readings, hours or days if the data is old (for example the poller was off)
+function formatAge(minutes) {
+  if (minutes < 90) return `${Math.round(minutes)} min ago`;
+  if (minutes < 48 * 60) return `${Math.round(minutes / 60)} h ago`;
+  return `${Math.round(minutes / 1440)} days ago`;
+}
 
 function formatDistance(metres) {
   return metres < 1000 ? `${Math.round(metres)} m` : `${(metres / 1000).toFixed(1)} km`;
@@ -175,7 +182,7 @@ function renderLive(result) {
   drawUser(user);
   const near = user.nearest;
   setCard("d-nearest", formatDifference(user.vs_nearest_db),
-    `${near.label}, ${formatDistance(near.distance_m)} away: ${near.LAeq} dB(A), 15-minute average from ${near.age_minutes} min ago`);
+    `${near.label}, ${formatDistance(near.distance_m)} away: ${near.LAeq} dB(A) (15-minute average, ${formatAge(near.age_minutes)})`);
 
   if (user.local_level === null) {
     setCard("d-local", "-", "No monitors within 3 km.");
