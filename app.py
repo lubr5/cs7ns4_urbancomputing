@@ -1,6 +1,9 @@
+import os
+import sys
 import threading
 import time
 from flask import jsonify, request, send_from_directory
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "tests"))
 import newPoller
 import stationCalculations as stations
 import userCalculations as user
