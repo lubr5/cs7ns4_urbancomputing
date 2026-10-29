@@ -1,7 +1,4 @@
-import os
-import sys
-import threading
-import time
+import atexit, json, os, hutil, signal, subprocess,sys, threading, time, urllib.request
 from flask import jsonify, request, send_from_directory
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "tests"))
 import newPoller
@@ -12,6 +9,8 @@ LIVE_WINDOW_SECONDS = 30          # live = last 30 seconds
 LIVE_MAX_AGE_SECONDS = 15         # kill phone after 15s
 REFRESH_COOLDOWN_SECONDS = 60     # DCC only updates every few minutes, so more often is pointless
 STATION_CACHE_SECONDS = 30        # reuse station list instead of re-reading Firestore
+PORT = 8000
+NGROK_DOMAIN = "swapping-oncoming-joining.ngrok-free.dev"
 
 lastRefresh = {"at": 0.0}
 stationCache = {"at": 0.0, "stations": []}
@@ -130,6 +129,26 @@ def refresh():
     stationCache["at"] = 0.0    
     return jsonify({"refreshed": True, "new_readings": written})
 
+# start the ngrok tunnel, stopped when the app stops
+def startTunnel():
+    if shutil.which("ngrok") is None:
+        return print("ngrok is not installed, serving on this computer only", flush=True)
+    tunnel = subprocess.Popen(["ngrok", "http", f"--url={NGROK_DOMAIN}", str(PORT)],
+                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    atexit.register(tunnel.terminate)
+    time.sleep(3)                                   # ngrok takes a moment to connect
+    if tunnel.poll() is not None:
+        return print("ngrok stopped straight away. Is another ngrok tunnel already running, or the authtoken missing?", flush=True)
+    try:                                            # ngrok reports its public address on a local port
+        with urllib.request.urlopen("http://127.0.0.1:4040/api/tunnels", timeout=3) as response:
+            print("Public address:", json.load(response)["tunnels"][0]["public_url"], flush=True)
+    except Exception:
+        print("ngrok is running at", f"https://{NGROK_DOMAIN}", flush=True)
+
 if __name__ == "__main__":
     threading.Thread(target=newPoller.pollForever, args=(db,), daemon=True).start()
-    app.run(host="0.0.0.0", port=8000, threaded=True)
+    for stopSignal in (signal.SIGTERM, signal.SIGHUP):    # closing the terminal or `kill` should also stop ngrok
+        signal.signal(stopSignal, lambda *args: sys.exit(0))
+    if "--no-tunnel" not in sys.argv:               # python3 app.py --no-tunnel to skip ngrok
+        threading.Thread(target=startTunnel, daemon=True).start()
+    app.run(host="0.0.0.0", port=PORT, threaded=True)
