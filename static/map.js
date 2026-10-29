@@ -214,6 +214,57 @@ async function pollLive() {
   }
 }
 
+// ---- refresh button: ask the server to fetch new DCC readings now ----
+const REFRESH_COOLDOWN_MS = 60000;      // matches the server's limit, so the button never gets a refusal
+const refreshButton = document.getElementById("refresh");
+const refreshNote = document.getElementById("refresh-note");
+let cooldownUntil = 0;
+let lastResult = "";
+let lastCheck = 0;
+
+// keeps the button label, the countdown and the "checked N s ago" note up to date
+function updateRefreshControls() {
+  const wait = Math.ceil((cooldownUntil - Date.now()) / 1000);
+  refreshButton.disabled = wait > 0;
+  refreshButton.textContent = wait > 0 ? `Refresh DCC data (${wait} s)` : "Refresh DCC data";
+  if (lastResult) {
+    const ago = Math.round((Date.now() - lastCheck) / 1000);
+    refreshNote.textContent = `${lastResult} (checked ${ago} s ago)`;
+  }
+}
+
+async function refreshDcc() {
+  refreshButton.disabled = true;
+  refreshNote.textContent = "Asking DCC for new readings...";
+  try {
+    const response = await fetch("/refresh", { method: "POST" });
+    const result = await response.json();
+    lastCheck = Date.now();
+    if (response.status === 429) {                       // someone refreshed a moment ago
+      cooldownUntil = Date.now() + result.retry_in_s * 1000;
+      lastResult = "Someone just refreshed, the data is current";
+    } else if (response.ok) {
+      cooldownUntil = Date.now() + REFRESH_COOLDOWN_MS;
+      lastResult = result.new_readings > 0
+        ? `${result.new_readings} new reading${result.new_readings === 1 ? "" : "s"} from DCC`
+        : "No new readings yet: DCC publishes about every 15 minutes";
+      await loadStations();
+    } else {
+      cooldownUntil = Date.now() + 10000;
+      lastResult = "Could not reach DCC, try again shortly";
+    }
+  } catch (error) {
+    console.error("refresh failed:", error);
+    cooldownUntil = Date.now() + 10000;
+    lastCheck = Date.now();
+    lastResult = "Cannot reach the server";
+  }
+  updateRefreshControls();
+}
+
+refreshButton.addEventListener("click", refreshDcc);
+setInterval(updateRefreshControls, 1000);
+
 loadStations();
 setInterval(loadStations, STATION_REFRESH_MS);
 pollLive();

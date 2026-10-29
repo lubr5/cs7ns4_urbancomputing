@@ -187,3 +187,8 @@ main.scroll {
   main.scroll { padding: 12px; overflow: visible; }
   .chart-box { height: 220px; }
 }
+
+/* refresh button next to the status chip */
+.status-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.status-row .note { font-size: 12px; }
+.reload:disabled { opacity: 0.55; cursor: default; }

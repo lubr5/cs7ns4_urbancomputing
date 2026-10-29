@@ -22,7 +22,11 @@
   </header>
 
   <section id="dashboard">
-    <div id="live-status" class="chip">Enter your token to compare your noise with the city.</div>
+    <div class="status-row">
+      <div id="live-status" class="chip">Enter your token to compare your noise with the city.</div>
+      <button id="refresh" class="reload" type="button">Refresh DCC data</button>
+      <span id="refresh-note" class="note"></span>
+    </div>
     <div class="cards">
       <div class="card">
         <div class="label">Your level <span class="when">(last 30 s)</span></div>
