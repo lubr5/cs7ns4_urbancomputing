@@ -25,6 +25,7 @@ L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 const stationLayer = L.layerGroup().addTo(map);
+const crowdLayer = L.layerGroup().addTo(map);
 
 function ratingColour(rating) {
   return RATING_COLOURS[rating] || NO_RATING_COLOUR;
@@ -73,12 +74,76 @@ async function loadStations() {
   }
 }
 
+// ---- citizen readings shared by other users: triangles with a black border, so they are not mistaken for DCC monitors ----
+const CROWD_REFRESH_MS = 20000;
+
+// colour by level (the same bands as the Insights page), not by DCC rating
+function levelColour(level) {
+  if (level < 55) return "#2e9e4f";
+  if (level < 65) return "#f2c200";
+  if (level < 75) return "#f28c00";
+  return "#d63a2f";
+}
+
+function crowdIcon(level) {
+  return L.divIcon({
+    className: "crowd-icon",
+    html: `<svg width="26" height="24" viewBox="0 0 26 24"><polygon points="13,2 24,22 2,22"
+      fill="${levelColour(level)}" stroke="#000000" stroke-width="2.5" stroke-linejoin="round"/></svg>`,
+    iconSize: [26, 24],
+    iconAnchor: [13, 16],
+  });
+}
+
+function crowdPopup(r) {
+  return `
+    <div class="popup">
+      <h3>Citizen reading</h3>
+      <p class="sub">Shared by a user, position rounded to about 100 m</p>
+      <table>
+        <tr><td>Level</td><td>${escapeHtml(r.level)} dB(A) (estimated)</td></tr>
+        <tr><td>Shared</td><td>${escapeHtml(formatAge(r.age_minutes))}</td></tr>
+      </table>
+      <p class="sub">From a phone microphone, not a calibrated measurement.</p>
+    </div>`;
+}
+
+function drawCrowd(readings) {
+  crowdLayer.clearLayers();
+  for (const r of readings) {
+    L.marker([r.latitude, r.longitude], { icon: crowdIcon(r.level), title: "Citizen reading" })
+      .bindPopup(crowdPopup(r)).addTo(crowdLayer);
+  }
+}
+
+async function loadCrowd() {
+  try {
+    const response = await fetch("/api/crowd");
+    if (!response.ok) throw new Error(response.status);
+    drawCrowd(await response.json());
+  } catch (error) {
+    console.error("could not load shared readings:", error);
+  }
+}
+
 // colour key
 const legend = L.control({ position: "bottomright" });
 legend.onAdd = () => {
   const div = L.DomUtil.create("div", "legend");
-  div.innerHTML = "<strong>DCC rating</strong><br>" + [1, 2, 3, 4, 5]
-    .map(r => `<i style="background:${ratingColour(r)}"></i>${r}`).join("<br>");
+  const key = "<strong>DCC rating</strong><br>" + [1, 2, 3, 4, 5]
+    .map(r => `<i style="background:${ratingColour(r)}"></i>${r}`).join("<br>")
+    + `<br><i style="background:${NO_RATING_COLOUR}"></i>No data`
+    + `<br><svg width="12" height="11" viewBox="0 0 26 24" style="margin-right:6px"><polygon points="13,2 24,22 2,22" fill="#cfd5dc" stroke="#000" stroke-width="3"/></svg>Citizen reading`;
+  div.innerHTML = `
+    <div class="legend-nav">
+      <button id="prev-monitor" type="button" disabled>&#9664; Prev</button>
+      <span id="monitor-count">Monitor</span>
+      <button id="next-monitor" type="button" disabled>Next &#9654;</button>
+    </div>
+    <div class="legend-key">${key}</div>`;
+  L.DomEvent.disableClickPropagation(div);          // pressing a button must not move the map
+  div.querySelector("#prev-monitor").addEventListener("click", () => cycleMonitor(-1));
+  div.querySelector("#next-monitor").addEventListener("click", () => cycleMonitor(1));
   return div;
 };
 legend.addTo(map);
@@ -138,13 +203,15 @@ function setStatus(kind, text) {
   document.getElementById("dashboard").classList.toggle("stale", kind === "offline");  
 }
 
-function drawUser(user) {
+function drawUser(user, target) {
   userLayer.clearLayers();
   const here = [user.latitude, user.longitude];
 
-  if (user.nearest) {
-    L.polyline([here, [user.nearest.latitude, user.nearest.longitude]],
+  if (target) {
+    L.polyline([here, [target.latitude, target.longitude]],
       { color: "#1f6feb", weight: 2, dashArray: "6 6" }).addTo(userLayer);
+    L.circleMarker([target.latitude, target.longitude],          // ring round the monitor being compared
+      { radius: 18, weight: 3, color: "#1f6feb", fill: false }).addTo(userLayer);
   }
   L.circleMarker(here, { radius: 9, weight: 3, color: "#ffffff", fillColor: "#1f6feb", fillOpacity: 1 })
     .bindTooltip("You", { permanent: true, direction: "top", offset: [0, -8] })
@@ -152,10 +219,37 @@ function drawUser(user) {
 
   if (firstFix) {            
     const points = [here];
-    if (user.nearest) points.push([user.nearest.latitude, user.nearest.longitude]);
+    if (target) points.push([target.latitude, target.longitude]);
     map.fitBounds(points, { padding: [60, 60], maxZoom: 15 });
     firstFix = false;
   }
+}
+let selectedCode = null;      // null means "the nearest one"
+let latestResult = null;
+
+function chosenMonitor(result) {
+  const list = result.stations;                       // sorted by distance from the user
+  let index = list.findIndex(s => s.code === selectedCode);
+  if (index < 0) index = 0;
+  return { index, station: list[index] };
+}
+
+function updateMonitorButtons(result, chosen) {
+  const count = result.stations.length;
+  document.getElementById("prev-monitor").disabled = count < 2;
+  document.getElementById("next-monitor").disabled = count < 2;
+  document.getElementById("monitor-count").textContent = `Monitor ${chosen.index + 1} of ${count}`;
+}
+
+function cycleMonitor(step) {
+  if (!latestResult || latestResult.user?.latitude == null) return;
+  const count = latestResult.stations.length;
+  const next = (chosenMonitor(latestResult).index + step + count) % count;
+  selectedCode = latestResult.stations[next].code;
+  renderLive(latestResult);                           // update card 
+  const user = latestResult.user, target = latestResult.stations[next];
+  map.fitBounds([[user.latitude, user.longitude], [target.latitude, target.longitude]],
+    { padding: [60, 60], maxZoom: 15 });          
 }
 
 function renderLive(result) {
@@ -179,10 +273,14 @@ function renderLive(result) {
     return;
   }
 
-  drawUser(user);
-  const near = user.nearest;
-  setCard("d-nearest", formatDifference(user.vs_nearest_db),
-    `${near.label}, ${formatDistance(near.distance_m)} away: ${near.LAeq} dB(A) (15-minute average, ${formatAge(near.age_minutes)})`);
+  latestResult = result;
+  const chosen = chosenMonitor(result);
+  drawUser(user, chosen.station);
+  updateMonitorButtons(result, chosen);
+  document.getElementById("d-nearest-label").textContent =
+    `Compared with ${chosen.station.label}, ${chosen.station.location}` + (chosen.index === 0 ? " (nearest)" : "");
+  setCard("d-nearest", formatDifference(user.level - chosen.station.LAeq),
+    `${formatDistance(chosen.station.distance_m)} away: ${chosen.station.LAeq} dB(A) (15-minute average, ${formatAge(chosen.station.age_minutes)})`);
 
   if (user.local_level === null) {
     setCard("d-local", "-", "No monitors within 3 km.");
@@ -267,5 +365,7 @@ setInterval(updateRefreshControls, 1000);
 
 loadStations();
 setInterval(loadStations, STATION_REFRESH_MS);
+loadCrowd();
+setInterval(loadCrowd, CROWD_REFRESH_MS);
 pollLive();
 setInterval(pollLive, LIVE_REFRESH_MS);

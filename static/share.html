@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Share a Reading</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>Dublin Noise</h1>
+    <nav>
+      <a href="/">Map</a>
+      <a href="/insights">Insights</a>
+      <a href="/share" class="current">Share</a>
+    </nav>
+    <div class="token">
+      <label for="token">Your token</label>
+      <input id="token" autocomplete="off" spellcheck="false" placeholder="e.g. CALIB">
+      <button id="save-token" type="button">Save</button>
+    </div>
+  </header>
+
+  <main class="scroll">
+    <div class="page">
+      <section class="panel">
+        <h2>Share a reading</h2>
+        <p class="hint">Share how loud it is where you are, so other people can see the noise in places the DCC monitors do not cover.
+          It appears on the map as a triangle for 24 hours.</p>
+
+        <div class="cards">
+          <div class="card"><div class="label">Your level now <span class="when">(last 30 s)</span></div><div class="value" id="s-level">-</div></div>
+          <div class="card"><div class="label">Phone</div><div class="value" id="s-state">-</div><div class="sub" id="s-state-sub"></div></div>
+        </div>
+
+        <button id="share" class="primary" type="button" disabled>Share my reading</button>
+        <span id="share-note" class="note"></span>
+
+        <ul class="facts">
+          <li>The position is rounded to about 100 m before it is saved, so your exact location is never shown.</li>
+          <li>Only the level and that rounded position are shared. Your token is not stored with it.</li>
+          <li>It is an estimate from your phone's microphone, not a calibrated measurement, and the map says so.</li>
+        </ul>
+      </section>
+
+      <section class="panel">
+        <h2>What you have shared</h2>
+        <p class="hint">Readings from this token that are still on the map.</p>
+        <ul id="shared-list" class="shared-list"></ul>
+        <p id="shared-empty" class="status">Nothing shared yet.</p>
+        <button id="clear" class="danger" type="button" disabled>Clear my data</button>
+        <span id="clear-note" class="note"></span>
+      </section>
+    </div>
+  </main>
+
+  <script src="/static/share.js"></script>
+</body>
+</html>
